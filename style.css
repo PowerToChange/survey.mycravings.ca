@@ -1,0 +1,50 @@
+body {
+	width: 80%;
+	margin: 0 auto;
+	text-align: center;
+	border: 1px solid black;
+}
+
+h1, h2  {
+	margin: 0px;
+}
+
+.choice {
+	opacity: 0.5;
+	float: left;
+	width: 30%;
+	border: 1px solid black;
+	margin: 20px;
+
+}
+
+.choice a {
+	text-decoration: none;
+	color: black;
+}
+
+.choice:hover, .choice:focus {
+	opacity: 1;
+}
+
+.questions, .personal {
+	text-align: left;
+}
+
+.hidden {
+	display: none;
+}
+
+.questions {
+	float: left;
+	width: 48%;
+}
+
+.personal {
+	float: right;
+	width: 48%;
+}
+
+select {
+	width: 100%;
+}
