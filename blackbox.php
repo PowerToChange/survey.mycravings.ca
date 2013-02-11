@@ -106,6 +106,30 @@
     return $return;
   }
 
+  function new_high_school_contact($params){
+    $contact = civicrm_call("Contact", "create", $params["Contact"]);
+    $id = $contact["values"]["contact_id"];
+
+    $primaryParams = array(
+      "contact_id" => $id, 
+      "isPrimary" => "1"
+      );
+
+    $emailParams = array_merge($params["Email"], $primaryParams);
+    civicrm_call("Email", "create", $emailParams);
+
+    $phoneParams = array_merge($params["Phone"], $primaryParams);
+    civicrm_call("Phone", "create", $phoneParams);
+
+    $relParams = array(
+      "relationship_type_id" => 12, // High School Student starting at
+      "contact_id_a" => $id,
+      "contact_id_b" => $params["School"]["contact_id_b"] 
+      );
+    civicrm_call("Relationship", "create", $schoolParams);
+
+  }
+
 
   //civicrm_call("Contact", "get", array("id" => "50000"));
 
