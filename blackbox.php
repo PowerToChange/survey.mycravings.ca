@@ -50,38 +50,66 @@
   }
 
   function new_contact($params){
-    $contact = civicrm_call("Contact", "create", $params["Contact"]);
-    $id = $contact["values"]["contact_id"];
+    $cParams = array(
+      "contact_type" => "Individual",
+      "contact_sub_type" => "Student",
+      "source" => "Input Form"
+      );
+    $conParams = array_merge($params["Contact"], $cParams);
+    if(!$conParams["first_name"] && !$conParams["last_name"] && !$conParams["email"]){
+      $conParams["first_name"] = "NoValue";
+    }
+    //var_dump($conParams);
+    $contact = civicrm_call("Contact", "create", $conParams);
+    if ($contact["is_error"] == 1) { throw new Exception($contact["error_message"]); }
+    $id = $contact["id"];
+    //var_dump($contact);
 
     $primaryParams = array(
       "contact_id" => $id, 
       "isPrimary" => "1"
       );
 
-    $emailParams = array_merge($params["Email"], $primaryParams);
-    civicrm_call("Email", "create", $emailParams);
+    if($params["Email"]["email"]){
+      $emailParams = array_merge($params["Email"], $primaryParams);
+      //var_dump($emailParams);
+      $emailReturn = civicrm_call("Email", "create", $emailParams);
+      //var_dump($emailReturn);
+      if ($emailReturn["is_error"] == 1) { throw new Exception($emailReturn["error_message"]); }
+    }
 
-    $phoneParams = array_merge($params["Phone"], $primaryParams);
-    civicrm_call("Phone", "create", $phoneParams);
+    if($params["Phone"]["phone"]){
+      $phoneParams = array_merge($params["Phone"], $primaryParams);
+      //var_dump($phoneParams);
+      $phoneReturn = civicrm_call("Phone", "create", $phoneParams);
+      //if ($phoneReturn["is_error"] == 1) { throw new Exception($phoneReturn["error_message"]); }
+      var_dump($phoneReturn);
+    }
 
-    $relParams = array(
+
+    $schoolParams = array(
       "relationship_type_id" => 10, // Student Currently Attending
       "contact_id_a" => $id,
       "contact_id_b" => $params["School"]["contact_id_b"] 
       );
-    civicrm_call("Relationship", "create", $schoolParams);
+    //var_dump($relParams);
+    $relReturn = civicrm_call("Relationship", "create", $schoolParams);
+    if ($relReturn["is_error"] == 1) { throw new Exception($relReturn["error_message"]); }
+    //var_dump($relReturn);
 
-    $date = "some special format date";
     $surveyParams = array(
       "source_contact_id" => 1,
       "target_contact_id" => $id,
       "activity_type_id" => 32, // petition
-      "activity_date_time" => $date,
-      "subject" => 'Mission Hub Survey 2012',
+      "subject" => 'Cravings Survey 2013',
       "status_id" => 2,  // completed
       "campaign_id" => 2 // September 2012 launch
       );
-
+    $sParams = array_merge($params["Survey"], $surveyParams);
+    //var_dump($sParams);
+    $surveyReturn = civicrm_call("Activity", "create", $sParams);
+    if ($surveyReturn["is_error"] == 1) { throw new Exception($surveyReturn["error_message"]); }
+    //var_dump($surveyReturn);
   }
 
   function sortByOrg($a, $b) {

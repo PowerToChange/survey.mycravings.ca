@@ -45,6 +45,19 @@ h1, h2  {
 	width: 48%;
 }
 
-select {
+.error {
+	color: red;
+}
+
+.success {
+	color: blue;
+}
+
+select#school {
 	width: 100%;
+}
+
+select#surveyTitle {
+	font-size: 18px;
+	margin: 0;
 }
