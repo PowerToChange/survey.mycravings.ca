@@ -5,11 +5,11 @@ body {
 	border: 1px solid black;
 }
 
-h1, h2  {
+h1, h2, h3  {
 	margin: 0px;
 }
 
-.choice {
+.choice, .coming {
 	opacity: 0.5;
 	float: left;
 	width: 30%;
@@ -23,8 +23,13 @@ h1, h2  {
 	color: black;
 }
 
-.choice:hover, .choice:focus {
+.choice:hover, .choice:focus, .coming:hover, .coming:focus {
 	opacity: 1;
+}
+
+.coming a {
+	text-decoration: none;
+	color:orange ;
 }
 
 .questions, .personal {

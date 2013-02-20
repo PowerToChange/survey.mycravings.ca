@@ -25,9 +25,10 @@
 		</a>
 	</div>
 
-	<div class="choice">
+	<div class="coming">
 		<a href="#">
 			<h1>French Survey</h1>
+			<h3>Coming Soon</h3>
 		</a>
 	</div>
 
