@@ -73,7 +73,7 @@
   </select>
   <br style="clear:both">
 
-  <!--<input type="hidden" name="s" value="<?php echo $_GET["s"]; ?>">-->
+  <input type="hidden" name="source" value="Input Form">
 
   <div class="questions">
     <div id="generalDiv" class="<?php if(!$disp_gen) echo "hidden"?>">
@@ -207,6 +207,7 @@
   </div>
 
   <div style="clear:both;"></div>
+  <br>
   <input type="submit" value="Submit">
   </form>
 

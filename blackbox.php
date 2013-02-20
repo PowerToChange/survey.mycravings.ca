@@ -11,10 +11,14 @@
   function http_call($params){
     $ch = curl_init(RESTURL);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch,CURLOPT_POST,count($params));
     curl_setopt($ch,CURLOPT_POSTFIELDS,$params);
     $reply = curl_exec($ch);
+    if(!$reply){
+      throw new Exception(curl_error($ch));
+    }
     curl_close($ch);
 
     return json_decode($reply, TRUE);
@@ -46,20 +50,53 @@
 
     $allParams = array_merge($postData, $addData, $params);
     return http_call($allParams);
-    
   }
 
-  function new_contact($params){
+  function new_contact($params) {
+    if(!$params["Contact"]["first_name"] && !$params["Contact"]["last_name"] && !$params["Contact"]["email"]){
+      $params["Contact"]["first_name"] = "NoValue";
+      $params["Contact"]["last_name"] = date("Y-m-d H:i:s"); 
+    }
+    $contact = $params["Contact"];
+    $survey = $params["Survey"];
+    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, DBNAME);
+    if (mysqli_connect_errno()) {
+      throw new Exception($mysqli->connect_error);
+    }
+
+    if($stmt = $mysqli->prepare("INSERT INTO `contacts` (`first_name`, `last_name`, `gender_id`, `email`, `phone`, `year`, `year_other`, `faculty`,
+      `residence`, `international`, `notes`, `submitter`, `school`, `general`, `love`, `want`, `power`, `magazine`, `guage`, `journey`, `status`)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'started')")){
+      $stmt->bind_param("ssssssssssssssssssss", $contact["first_name"], $contact["last_name"], $contact["gender_id"], $params["Email"]["email"], 
+        $params["Phone"]["phone"], $contact["custom_57"], $contact["custom_58"], $contact["custom_59"], $contact["custom_60"], $contact["contact_61"],
+        $survey["custom_83"], $survey["custom_120"], $params["School"]["contact_id_b"], $survey["custom_64"], $survey["custom_116"],
+        $survey["custom_117"], $survey["custom_115"], $survey["custom_65"], $survey["custom_66"], $survey["custom_67"]);
+      $stmt->execute();
+      $stmt->close();
+      $sqlId = $mysqli->insert_id;
+    }
+
+    try {
+      $connectId = new_contact_calls($params);
+      $stmtString = "UPDATE `contacts` SET `status`='success', `civicrm_id`='" . $connectId . "' WHERE `id`=" . $sqlId;
+      if(!$mysqli->query($stmtString)){
+        throw new Exception($mysqli->error);
+      }
+    }
+    catch (Exception $e){
+      $stmtString = "UPDATE `contacts` SET `status`='failed', `result`='" . $e->getMessage() . "' WHERE `id`=" . $sqlId;
+      if(!$mysqli->query($stmtString)){
+        throw new Exception($mysqli->error);
+      }
+    }
+
+  }
+
+  function new_contact_calls($params){
     $cParams = array(
       "contact_type" => "Individual",
-      "contact_sub_type" => "Student",
-      "source" => "Input Form"
       );
     $conParams = array_merge($params["Contact"], $cParams);
-    if(!$conParams["first_name"] && !$conParams["last_name"] && !$conParams["email"]){
-      $conParams["first_name"] = "NoValue";
-    }
-    //var_dump($conParams);
     $contact = civicrm_call("Contact", "create", $conParams);
     if ($contact["is_error"] == 1) { throw new Exception($contact["error_message"]); }
     $id = $contact["id"];
@@ -72,7 +109,6 @@
 
     if($params["Email"]["email"]){
       $emailParams = array_merge($params["Email"], $primaryParams);
-      //var_dump($emailParams);
       $emailReturn = civicrm_call("Email", "create", $emailParams);
       //var_dump($emailReturn);
       if ($emailReturn["is_error"] == 1) { throw new Exception($emailReturn["error_message"]); }
@@ -80,19 +116,16 @@
 
     if($params["Phone"]["phone"]){
       $phoneParams = array_merge($params["Phone"], $primaryParams);
-      //var_dump($phoneParams);
       $phoneReturn = civicrm_call("Phone", "create", $phoneParams);
-      //if ($phoneReturn["is_error"] == 1) { throw new Exception($phoneReturn["error_message"]); }
-      var_dump($phoneReturn);
+      if ($phoneReturn["is_error"] == 1) { throw new Exception($phoneReturn["error_message"]); }
+      //var_dump($phoneReturn);
     }
-
 
     $schoolParams = array(
       "relationship_type_id" => 10, // Student Currently Attending
       "contact_id_a" => $id,
       "contact_id_b" => $params["School"]["contact_id_b"] 
       );
-    //var_dump($relParams);
     $relReturn = civicrm_call("Relationship", "create", $schoolParams);
     if ($relReturn["is_error"] == 1) { throw new Exception($relReturn["error_message"]); }
     //var_dump($relReturn);
@@ -106,15 +139,16 @@
       "campaign_id" => 2 // September 2012 launch
       );
     $sParams = array_merge($params["Survey"], $surveyParams);
-    //var_dump($sParams);
     $surveyReturn = civicrm_call("Activity", "create", $sParams);
     if ($surveyReturn["is_error"] == 1) { throw new Exception($surveyReturn["error_message"]); }
     //var_dump($surveyReturn);
+
+    return $id;
   }
 
   function sortByOrg($a, $b) {
     return strcmp($a['organization_name'], $b['organization_name']);
-}
+  }
 
   function get_schools(){
     global $postData;
@@ -133,32 +167,4 @@
     usort($return, "sortByOrg");
     return $return;
   }
-
-  function new_high_school_contact($params){
-    $contact = civicrm_call("Contact", "create", $params["Contact"]);
-    $id = $contact["values"]["contact_id"];
-
-    $primaryParams = array(
-      "contact_id" => $id, 
-      "isPrimary" => "1"
-      );
-
-    $emailParams = array_merge($params["Email"], $primaryParams);
-    civicrm_call("Email", "create", $emailParams);
-
-    $phoneParams = array_merge($params["Phone"], $primaryParams);
-    civicrm_call("Phone", "create", $phoneParams);
-
-    $relParams = array(
-      "relationship_type_id" => 12, // High School Student starting at
-      "contact_id_a" => $id,
-      "contact_id_b" => $params["School"]["contact_id_b"] 
-      );
-    civicrm_call("Relationship", "create", $schoolParams);
-
-  }
-
-
-  //civicrm_call("Contact", "get", array("id" => "50000"));
-
 ?>

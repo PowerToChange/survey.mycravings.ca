@@ -24,8 +24,9 @@
 
   $result = get_schools();
   foreach ($result as $school => $data) {
-    $stmt = "INSERT INTO schools (contact_id, name) VALUES (" . $data["contact_id"] . ", \"" . $data["organization_name"] . "\")";
-    if($mysqli->query($stmt) === TRUE){
+    $stmt = $mysqli->prepare("INSERT INTO schools (contact_id, name) VALUES (?,?)");
+    $stmt->bind_param("is", $data["contact_id"], $data["organization_name"]);
+    if($stmt->execute()){
       echo "row created\n";
     }
   }
