@@ -68,7 +68,7 @@
       `residence`, `international`, `notes`, `submitter`, `school`, `general`, `love`, `want`, `power`, `magazine`, `guage`, `journey`, `status`)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'started')")){
       $stmt->bind_param("ssssssssssssssssssss", $contact["first_name"], $contact["last_name"], $contact["gender_id"], $params["Email"]["email"], 
-        $params["Phone"]["phone"], $contact["custom_57"], $contact["custom_58"], $contact["custom_59"], $contact["custom_60"], $contact["contact_61"],
+        $params["Phone"]["phone"], $contact["custom_57"], $contact["custom_58"], $contact["custom_59"], $contact["custom_60"], $contact["custom_61"],
         $survey["custom_83"], $survey["custom_120"], $params["School"]["contact_id_b"], $survey["custom_64"], $survey["custom_116"],
         $survey["custom_117"], $survey["custom_115"], $survey["custom_65"], $survey["custom_66"], $survey["custom_67"]);
       $stmt->execute();
