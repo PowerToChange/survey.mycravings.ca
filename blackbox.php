@@ -65,12 +65,13 @@
     }
 
     if($stmt = $mysqli->prepare("INSERT INTO `contacts` (`first_name`, `last_name`, `gender_id`, `email`, `phone`, `year`, `year_other`, `faculty`,
-      `residence`, `international`, `notes`, `submitter`, `school`, `general`, `love`, `want`, `power`, `magazine`, `guage`, `journey`, `status`)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'started')")){
-      $stmt->bind_param("ssssssssssssssssssss", $contact["first_name"], $contact["last_name"], $contact["gender_id"], $params["Email"]["email"], 
+      `residence`, `international`, `notes`, `submitter`, `school`, `general`, `warmup_other`, `love`, `love_other`, `want`, `want_other`, `power`,
+      `magazine`, `guage`, `journey`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'started')")){
+      $stmt->bind_param("sssssssssssssssssssssss", $contact["first_name"], $contact["last_name"], $contact["gender_id"], $params["Email"]["email"],
         $params["Phone"]["phone"], $contact["custom_57"], $contact["custom_58"], $contact["custom_59"], $contact["custom_60"], $contact["custom_61"],
-        $survey["custom_83"], $survey["custom_120"], $params["School"]["contact_id_b"], $survey["custom_64"], $survey["custom_116"],
-        $survey["custom_117"], $survey["custom_115"], $survey["custom_65"], $survey["custom_66"], $survey["custom_67"]);
+        $survey["custom_83"], $survey["custom_120"], $params["School"]["contact_id_b"], $survey["custom_64"], $survey["custom_126"],
+        $survey["custom_116"], $survey["custom_118"], $survey["custom_117"], $survey["custom_119"], $survey["custom_115"], $survey["custom_65"],
+        $survey["custom_66"], $survey["custom_67"]);
       $stmt->execute();
       $stmt->close();
       $sqlId = $mysqli->insert_id;

@@ -82,7 +82,8 @@
       <input type="radio" name="Survey[custom_64]" value="warmup-relationship">relationship</input>
       <input type="radio" name="Survey[custom_64]" value="warmup-money">money</input>
       <input type="radio" name="Survey[custom_64]" value="warmup-grades">good grades</input>
-      <!-- What to do about the other section? -->
+      <label for="warmupOther">Other:</label>
+      <input type="text" id="warmupOther" name="Survey[custom_126]">
     </div>
 
     <div id="loveDiv" class="<?php if(!$disp_love) echo "hidden"?>">
