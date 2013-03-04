@@ -85,7 +85,8 @@
       }
     }
     catch (Exception $e){
-      $stmtString = "UPDATE `contacts` SET `status`='failed', `result`='" . $e->getMessage() . "' WHERE `id`=" . $sqlId;
+      $message = $mysqli->real_escape_string($e->getMessage());
+      $stmtString = "UPDATE `contacts` SET `status`='failed', `result`='" . $message . "' WHERE `id`=" . $sqlId;
       if(!$mysqli->query($stmtString)){
         throw new Exception($mysqli->error);
       }
