@@ -73,7 +73,7 @@
   </select>
   <br style="clear:both">
 
-  <input type="hidden" name="source" value="Input Form">
+  <input type="hidden" name="Contact[source]" value="Survey Input Form">
 
   <div class="questions">
     <div id="generalDiv" class="<?php if(!$disp_gen) echo "hidden"?>">
