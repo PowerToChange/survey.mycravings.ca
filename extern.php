@@ -1,7 +1,7 @@
 <?php
   include 'blackbox.php';
   
-  if($_POST){
+  if($_POST && $_POST["externpass"] == CRAVEKEY){
     try {
       new_contact($_POST);
       echo "success";
