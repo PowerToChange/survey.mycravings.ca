@@ -1,5 +1,5 @@
 <?php
-  include 'blackbox.php';
+  include '../blackbox.php';
   
   $count = 1;
   $offset = 200;
