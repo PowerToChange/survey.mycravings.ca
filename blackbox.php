@@ -4,8 +4,8 @@
   $postData = array(
     "json" => "1",
     "PHPSESSID" => "",
-    "api_key" => "1",
-    "key" => KEY,
+    "api_key" => API_KEY,
+    "key" => KEY
   );
 
   function http_call($params){
