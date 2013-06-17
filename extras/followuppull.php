@@ -2,7 +2,7 @@
   include '../blackbox.php';
 
   function notes(){
-    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "test");
+    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "pulse");
     if (mysqli_connect_errno()) {
       printf("Connect failed: %s\n", mysqli_connect_error());
       exit();
@@ -36,7 +36,7 @@
 
 
   function activities(){
-    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "test");
+    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "pulse");
     if (mysqli_connect_errno()) {
       printf("Connect failed: %s\n", mysqli_connect_error());
       exit();
@@ -65,10 +65,11 @@
         }
       }
     }
+    echo $rejNum . " rejoiceables added\n";
   }
 
   function other(){
-    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "test");
+    $mysqli = new mysqli(DBLOCATION, DBUSER, DBPASS, "pulse");
     if (mysqli_connect_errno()) {
       printf("Connect failed: %s\n", mysqli_connect_error());
       exit();
@@ -142,7 +143,8 @@
               $statusParams = array(
                 "id" => $res["id"],
                 "status_id" => $status,
-                "engagement_level" => $index
+                "engagement_level" => $index,
+                "assignee_contact_id" => $row["civicrm_id"]
               );
               $statusReturn = civicrm_call("Activity", "update", $statusParams);
               if ($statusReturn["is_error"] == 1) { echo "ERROR: " . $statusReturn["error_message"] . "\n"; }
